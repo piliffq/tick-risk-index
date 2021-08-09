@@ -9,14 +9,17 @@ This script uses 2 databases:
 
 # The proportion of time spent in each habitat/transect
 
-```{r time}
+For each person, estimate the total time
 
-    #for each person, estimate the total time
+```{r time}
     Park.use.ind <- Park.use %>% group_by(ind_id) %>% summarise(totelapsed = sum(elapsed))
     #merge with long database
     Park.use <- merge(Park.use, Park.use.ind, by.x = "ind_id", by.y = "ind_id", all.x = TRUE)    
+```
 
-    #for trails, since we don't have the exit times, we can generate a negative binomial distributions using the variance from the elapsed observations to have a measure of variability and a median of 15 min (half of estimated period)
+For trails, since we don't have the exit times, we can generate a negative binomial distributions using the variance from the elapsed observations to have a measure of variability and a median of 15 min (half of estimated period).
+
+```{r time trails}
     variance <- var(Park.use$elapsed,na.rm = TRUE)
     mu <- 1.5
     variance <- 2
@@ -33,13 +36,15 @@ This script uses 2 databases:
     Park.use$totelapsed <- ifelse(Park.use$site.type == "Trail",Park.use$trails.time, Park.use$totelapsed)
 
     Park.use$elapsed <- ifelse(Park.use$site.type == "Trail",Park.use$trails.time, Park.use$elapsed)
-    
-    #since the risk index is going to be estimated for the 30min observation period, we assume that if the total time is less than 30 min, the rest of the time was spent somewhere else and created another column to keep track of that:
+```
+
+Since the risk index is going to be estimated for the 30min observation period, we assume that if the total time is less than 30 min, the rest of the time was spent somewhere else and created another column to keep track of that:
+```{r time}
     Park.use$unknown.risk.time <- (30 - Park.use$totelapsed)/30
-    
-    #for each transect, estimated the proportion of time in a 30min obs period
-    Park.use$known.risk.time <- (Park.use$elapsed)/30
-    
+ ```   
+ For each transect, estimated the proportion of time in a 30min obs period
+```{r time}
+Park.use$known.risk.time <- (Park.use$elapsed)/30    
 ```
 
 # Merge Park use database with tick density predicted database
@@ -78,6 +83,7 @@ Park.use$Pb.HL <- (1-(1-Park.use$known.risk.time)^Park.use$median.HL.1m)
 ```
 
 # Descriptive analysis 
+
 ```{r descriptive risk index}
 
 kruskal.test(Pb.IS ~ park , Park.use, site.type == "Open Space")
@@ -119,10 +125,10 @@ kruskal.test(Pb.IS ~ park , Park.use, site.type == "Trail")
       quantile(Park.use$Pb.HL[Park.use$site.type == "Open Space" & Park.use$park == "Conference House"], probs=0.75, na.rm=TRUE)
       quantile(Park.use$Pb.HL[Park.use$site.type == "Open Space" & Park.use$park == "Conference House"], probs=0.99, na.rm=TRUE)*100
 ```
-      
-```{r plot risk index}
 
-# Build the plot
+Build the plot      
+
+```{r plot risk index}
 library(vioplot)
 Park.use$park <- factor(Park.use$park , levels=c("Clove Lakes", "Willowbrook", "Conference House"))
 
@@ -249,8 +255,10 @@ median(Risk.index.person$exposure.HL.person[Risk.index.person$Site == "Open Spac
 quantile(Risk.index.person$exposure.HL.person[Risk.index.person$Site == "Open Space" & Risk.index.person$Park == "Conference House"], probs=0.25, na.rm=TRUE)
 quantile(Risk.index.person$exposure.HL.person[Risk.index.person$Site == "Open Space" & Risk.index.person$Park == "Conference House"], probs=0.75, na.rm=TRUE)
 quantile(Risk.index.person$exposure.HL.person[Risk.index.person$Site == "Open Space" & Risk.index.person$Park == "Conference House"], probs=0.99, na.rm=TRUE)
+```
 
-#Build the plots
+Build the plots
+```{r plot risk time}
 Park.use$park <- factor(Park.use$park , levels=c("Clove Lakes", "Willowbrook", "Conference House"))
 
 pdf("risktick.pdf", width = 4, height = 8)

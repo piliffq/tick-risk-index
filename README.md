@@ -19,7 +19,7 @@ For each person, estimate the total time
 
 For trails, since we don't have the exit times, we can generate a negative binomial distributions using the variance from the elapsed observations to have a measure of variability and a median of 15 min (half of estimated period).
 
-```{r time trails}
+```{r}
     variance <- var(Park.use$elapsed,na.rm = TRUE)
     mu <- 1.5
     variance <- 2
@@ -32,28 +32,28 @@ For trails, since we don't have the exit times, we can generate a negative binom
     Park.use$trails.time[Park.use$site.type != "Trail"] <- NA
     Park.use$trails.time[Park.use$trails.time > 30] <- 30
     
-    #we add the latter to elapsed time and total elapsed
+    we add the latter to elapsed time and total elapsed
     Park.use$totelapsed <- ifelse(Park.use$site.type == "Trail",Park.use$trails.time, Park.use$totelapsed)
 
     Park.use$elapsed <- ifelse(Park.use$site.type == "Trail",Park.use$trails.time, Park.use$elapsed)
 ```
 
 Since the risk index is going to be estimated for the 30min observation period, we assume that if the total time is less than 30 min, the rest of the time was spent somewhere else and created another column to keep track of that:
-```{r time}
+```{r}
     Park.use$unknown.risk.time <- (30 - Park.use$totelapsed)/30
  ```   
  For each transect, estimated the proportion of time in a 30min obs period
-```{r time}
+```{r}
 Park.use$known.risk.time <- (Park.use$elapsed)/30    
 ```
 
 # Merge Park use database with tick density predicted database
 
-```{r tick density}
+```{r}
     
 Park.use <- merge(Park.use,est.ticks.sum, by = "matchID", all.x = TRUE)
 
-#if they were in an impervious surface --> I set the predicted tick dens to 0
+if they were in an impervious surface --> I set the predicted tick dens to 0
 Park.use$median.AA[Park.use$Habitat_recode == "I"]<-0
 Park.use$median.IS[Park.use$Habitat_recode == "I"]<-0
 Park.use$median.HL[Park.use$Habitat_recode == "I"]<-0
@@ -73,7 +73,7 @@ Now you can calculate the risk index which is the probability of a tick encounte
 
 If the person stayed in the same spot until the end of the observation period (30m), we turn it into 0.99 to avoid approaching the limit
 
-```{r risk index}
+```{r}
 
 Park.use$known.risk.time[Park.use$known.risk.time == 1]<-0.99999
 
@@ -84,7 +84,7 @@ Park.use$Pb.HL <- (1-(1-Park.use$known.risk.time)^Park.use$median.HL.1m)
 
 # Descriptive analysis 
 
-```{r descriptive risk index}
+```{r}
 
 kruskal.test(Pb.IS ~ park , Park.use, site.type == "Open Space")
 kruskal.test(Pb.IS ~ park , Park.use, site.type == "Trail")
@@ -128,7 +128,7 @@ kruskal.test(Pb.IS ~ park , Park.use, site.type == "Trail")
 
 Build the plot      
 
-```{r plot risk index}
+```{r}
 library(vioplot)
 Park.use$park <- factor(Park.use$park , levels=c("Clove Lakes", "Willowbrook", "Conference House"))
 
@@ -204,7 +204,7 @@ Park.use$exposure.IS <- Park.use$elapsed*Park.use$median.IS.1m
 Park.use$exposure.AA <- Park.use$elapsed*Park.use$median.AA.1m
 Park.use$exposure.HL <- Park.use$elapsed*Park.use$median.HL.1m
         
-#Lastly, to summarize exposure time per person, we sum their exposure as potetial risk
+Lastly, to summarize exposure time per person, we sum their exposure as potetial risk
 
 Park.use$ind_id <- as.factor(Park.use$ind_id)
         

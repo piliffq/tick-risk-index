@@ -10,6 +10,7 @@ This script uses 2 databases:
 # The proportion of time spent in each habitat/transect
 
 ```{r time}
+
     #for each person, estimate the total time
     Park.use.ind <- Park.use %>% group_by(ind_id) %>% summarise(totelapsed = sum(elapsed))
     #merge with long database
@@ -249,7 +250,7 @@ quantile(Risk.index.person$exposure.HL.person[Risk.index.person$Site == "Open Sp
 quantile(Risk.index.person$exposure.HL.person[Risk.index.person$Site == "Open Space" & Risk.index.person$Park == "Conference House"], probs=0.75, na.rm=TRUE)
 quantile(Risk.index.person$exposure.HL.person[Risk.index.person$Site == "Open Space" & Risk.index.person$Park == "Conference House"], probs=0.99, na.rm=TRUE)
 
-# Build the plots
+#Build the plots
 Park.use$park <- factor(Park.use$park , levels=c("Clove Lakes", "Willowbrook", "Conference House"))
 
 pdf("risktick.pdf", width = 4, height = 8)

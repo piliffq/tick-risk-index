@@ -11,7 +11,7 @@ This script uses 2 databases:
 
 For each person, estimate the total time
 
-```{r time}
+```{r}
     Park.use.ind <- Park.use %>% group_by(ind_id) %>% summarise(totelapsed = sum(elapsed))
     #merge with long database
     Park.use <- merge(Park.use, Park.use.ind, by.x = "ind_id", by.y = "ind_id", all.x = TRUE)    

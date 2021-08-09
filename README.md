@@ -257,7 +257,7 @@ quantile(Risk.index.person$exposure.HL.person[Risk.index.person$Site == "Open Sp
 ```
 
 Build the plots
-```{r plot risk time}
+```{r}
 Park.use$park <- factor(Park.use$park , levels=c("Clove Lakes", "Willowbrook", "Conference House"))
 
 pdf("risktick.pdf", width = 4, height = 8)

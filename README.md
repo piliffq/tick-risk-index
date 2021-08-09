@@ -319,5 +319,4 @@ HL.exp <- vioplot(exposure.HL.person ~ Site*Park,
         legend("topleft", legend = c("Open Space", "Trail"), fill = c("darkslateblue", "yellow"), cex = 0.8, bty = "n")
         axis(side=1,at=c(1.5,3.5,5.5),labels=c("Clove Lakes", "Willowbrook", "Conference House"))
          text(x = c(5:6), y = c(15,15), labels = round(HL.exp$median, 3))
-
 ```

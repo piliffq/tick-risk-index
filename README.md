@@ -50,7 +50,6 @@ Park.use$known.risk.time <- (Park.use$elapsed)/30
 # Merge Park use database with tick density predicted database
 
 ```{r}
-    
 Park.use <- merge(Park.use,est.ticks.sum, by = "matchID", all.x = TRUE)
 
 if they were in an impervious surface --> I set the predicted tick dens to 0
@@ -74,7 +73,6 @@ Now you can calculate the risk index which is the probability of a tick encounte
 If the person stayed in the same spot until the end of the observation period (30m), we turn it into 0.99 to avoid approaching the limit
 
 ```{r}
-
 Park.use$known.risk.time[Park.use$known.risk.time == 1]<-0.99999
 
 Park.use$Pb.IS <- (1-(1-Park.use$known.risk.time)^Park.use$median.IS.1m)
@@ -85,7 +83,6 @@ Park.use$Pb.HL <- (1-(1-Park.use$known.risk.time)^Park.use$median.HL.1m)
 # Descriptive analysis 
 
 ```{r}
-
 kruskal.test(Pb.IS ~ park , Park.use, site.type == "Open Space")
 kruskal.test(Pb.IS ~ park , Park.use, site.type == "Trail")
 
@@ -198,14 +195,13 @@ IS.plot$median
          
 # Exposure time
 
-```{r exposure}
-
+```{r}
 Park.use$exposure.IS <- Park.use$elapsed*Park.use$median.IS.1m
 Park.use$exposure.AA <- Park.use$elapsed*Park.use$median.AA.1m
 Park.use$exposure.HL <- Park.use$elapsed*Park.use$median.HL.1m
-        
+```        
 Lastly, to summarize exposure time per person, we sum their exposure as potetial risk
-
+```{r}
 Park.use$ind_id <- as.factor(Park.use$ind_id)
         
 Risk.index.person <- Park.use %>%
@@ -222,7 +218,10 @@ Risk.index.person <- Park.use %>%
                      exposure.HL.person = sum(exposure.HL, na.rm = TRUE)
                      )
 Risk.index.person <- Risk.index.person[!duplicated(Risk.index.person$ind_id), ]
+```
 
+Descriptive analyses
+```{r}
 #IS in trails
 median(Risk.index.person$exposure.IS.person[Risk.index.person$Site == "Trail"],na.rm = TRUE)
 quantile(Risk.index.person$exposure.IS.person[Risk.index.person$Site == "Trail"], probs=0.25, na.rm=TRUE)

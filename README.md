@@ -1,14 +1,3 @@
----
-title: "Risk index"
-author: "MPF"
-date: "8/9/2021"
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 # Estimating Risk Index
 
 This script uses 2 databases:
